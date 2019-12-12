@@ -11,13 +11,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
-public class AddShiftController
+public class EditShiftController
 {
+    private DBConnection database = new DBConnection();
+    private Connection connection;
+    private Statement statement;
     private ResultSet resultSet;
 
     @FXML
@@ -30,6 +29,8 @@ public class AddShiftController
     Button btnok;
     @FXML
     Button btncancel;
+    @FXML
+    Button btndelete;
     @FXML
     RadioButton LunchStart;
     @FXML
@@ -64,44 +65,49 @@ public class AddShiftController
         DBConnection database = new DBConnection();
         Connection connection = database.getConnection();
         Statement statement = connection.createStatement();
+        String str = "SELECT ShiftStartTime, ShiftEndTime FROM Schedule WHERE ShiftDate = '" + ShiftDate + "' AND Employee_ID = " + EmployeeID;
+        ResultSet resultSet = statement.executeQuery(str);
+        resultSet.next();
+
+        cbstarttime.setValue(resultSet.getString("ShiftStartTime"));
+        cbendtime.setValue(resultSet.getString("ShiftEndTime"));
+
         resultSet = statement.executeQuery("SELECT FirstName, LastName FROM Employee WHERE Employee_ID = " + EmployeeID);
         resultSet.next();
 
-        lblemployee.setText("Add " + ShiftDate + " Shift for " + resultSet.getString("FirstName") + " " + resultSet.getString("LastName"));
+        lblemployee.setText("Alter " + ShiftDate + " Shift for " + resultSet.getString("FirstName") + " " + resultSet.getString("LastName"));
     }
 
     @FXML
-    private void onAddShift() throws SQLException, ParseException
+    private void onEditShift() throws SQLException
     {
+        //Add method to verify the time is valid
         String startTime = (String)cbstarttime.getValue();
         String endTime = (String)cbendtime.getValue();
 
         DBConnection database = new DBConnection();
         Connection connection = database.getConnection();
         Statement statement = connection.createStatement();
-        String str = "INSERT INTO Schedule (Employee_ID, ShiftDate, ShiftStartTime, ShiftEndTime) VALUES ("
-                + EmployeeID + ", '" + ShiftDate + "', '" + startTime + "', '" + endTime + "');";
+        String str = "UPDATE Schedule SET ShiftStartTime = '" + startTime + "', ShiftEndTime = '" + endTime +
+                "' WHERE Employee_ID = " + EmployeeID + " AND ShiftDate = '" + ShiftDate + "';";
         System.out.println(str);
 
-        if(!validateHours())
+        try
+        {
+            statement.executeUpdate(str);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Shift Changed");
+            alert.setHeaderText("Shift Changed Successfully");
+            alert.showAndWait();
+        }
+        catch (SQLException e)
         {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Shift Add Failed");
-            alert.setHeaderText("Shift Add Failed");
+            alert.setTitle("Shift Change Failed");
+            alert.setHeaderText("Shift Change Failed");
             alert.setContentText("Please Verify Times are Valid and Try Again");
             alert.showAndWait();
-
-            Stage stage = (Stage) btnok.getScene().getWindow();
-            stage.close();
-
-            return;
         }
-
-        statement.executeUpdate(str);
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Shift Added");
-        alert.setHeaderText("Shift Added Successfully");
-        alert.showAndWait();
 
         Controller.showSchedule();
 
@@ -116,21 +122,26 @@ public class AddShiftController
         stage.close();
     }
 
-    private boolean validateHours() throws ParseException
+    @FXML
+    private void onDeleteShift() throws SQLException
     {
-        String startTime = (String)cbstarttime.getValue();
-        String endTime = (String)cbendtime.getValue();
+        DBConnection database = new DBConnection();
+        Connection connection = database.getConnection();
+        Statement statement = connection.createStatement();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this shift?", ButtonType.YES, ButtonType.CANCEL);
+        alert.setTitle("Delete Shift Confirmation");
+        alert.setHeaderText("Please confirm shift deletion");
+        alert.showAndWait();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a");
-        Date start = sdf.parse(startTime);
-        Date end = sdf.parse(endTime);
-
-        if(end.before(start))
-            return false;
-        else
-            return true;
+        if (alert.getResult() == ButtonType.YES)
+        {
+            String deleteShift = "DELETE FROM Schedule WHERE Employee_ID = " + EmployeeID + " AND ShiftDate = '" + ShiftDate + "'";
+            statement.executeUpdate(deleteShift);
+            Controller.showSchedule();
+            Stage stage = (Stage) btndelete.getScene().getWindow();
+            stage.close();
+        }
     }
-
     @FXML
     private void onLunchStart()
     {
@@ -160,5 +171,4 @@ public class AddShiftController
     {
         cbendtime.setValue("9:30:00 PM");
     }
-
 }
