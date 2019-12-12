@@ -1,12 +1,8 @@
 package View;
 
-import Database.DBConnection;
+import Database.DBOperation;
 import Main.Schedule;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -27,12 +23,10 @@ import javafx.stage.Stage;
 
 public class HoursWorkedController
 {
-    private DBConnection database = new DBConnection();
-    private Connection connection;
-    private Statement statement;
-    private ResultSet resultSet;
+    private DBOperation db = new DBOperation();
     private int employeeID;
     String[] week = new String[7];
+
     @FXML
     Button doneButton;
     @FXML
@@ -60,9 +54,11 @@ public class HoursWorkedController
     @FXML
     TableColumn<Schedule, String> sundayCol;
 
+    public HoursWorkedController() throws SQLException { }
+
     public void onInit(int id) throws SQLException, ParseException
     {
-        this.employeeID = id;
+        employeeID = id;
         this.getWeek();
         hoursWorked.setText(getHoursWorked());
     }
@@ -70,10 +66,6 @@ public class HoursWorkedController
     public String getHoursWorked() throws SQLException, ParseException
     {
         hoursWorkedTable.getItems().clear();
-
-        DBConnection database = new DBConnection();
-        Connection connection = database.getConnection();
-        Statement statement = connection.createStatement();
 
         this.mondayCol.setCellValueFactory(new PropertyValueFactory("monday"));
         this.tuesdayCol.setCellValueFactory(new PropertyValueFactory("tuesday"));
@@ -92,39 +84,40 @@ public class HoursWorkedController
         String fridayShift = "";
         String saturdayShift = "";
 
-        DateFormat df = new SimpleDateFormat("hh:mm:ss aa");
-        DateFormat hhmmss = new SimpleDateFormat("hh:mm aa");
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm aa");
         long hoursWorked = 0L;
 
-        for(int i = 0; i < 7; ++i) {
-            String current = week[i];
-            String str = "SELECT * FROM TimePunches WHERE Employee_ID = '" + this.employeeID + "' AND CurrentDate = '" + current + "';";
-            ResultSet resultSet = statement.executeQuery(str);
-            if (resultSet.first()) {
-                String cIn = hhmmss.format(df.parse(resultSet.getString("ClockInTime")));
-                String cOut = hhmmss.format(df.parse(resultSet.getString("ClockOutTime")));
+        for(int i = 0; i < 7; ++i)
+        {
+            String currentDate = week[i];
+
+            String[] shiftTimes = db.getHoursWorked(employeeID, currentDate);
+
+            if (shiftTimes[0] != null)
+            {
+                String startTime = shiftTimes[0];
+                String endTime = shiftTimes[1];
                 Calendar clockInTime = Calendar.getInstance();
                 Calendar clockOutTime = Calendar.getInstance();
-                clockInTime.setTime(sdf.parse(cIn));
-                clockOutTime.setTime(sdf.parse(cOut));
-                String day = cIn + " - " + cOut;
+                clockInTime.setTime(sdf.parse(startTime));
+                clockOutTime.setTime(sdf.parse(endTime));
+                String shift = startTime + " - " + endTime;
                 hoursWorked += clockOutTime.getTimeInMillis() - clockInTime.getTimeInMillis();
-                if (i == 0) {
-                    mondayShift = day;
-                } else if (i == 1) {
-                    tuesdayShift = day;
-                } else if (i == 2) {
-                    wednesdayShift = day;
-                } else if (i == 3) {
-                    thursdayShift = day;
-                } else if (i == 4) {
-                    fridayShift = day;
-                } else if (i == 5) {
-                    saturdayShift = day;
-                } else if (i == 6) {
-                    sundayShift = day;
-                }
+
+                if (i == 0)
+                    mondayShift = shift;
+                else if (i == 1)
+                    tuesdayShift = shift;
+                else if (i == 2)
+                    wednesdayShift = shift;
+                else if (i == 3)
+                    thursdayShift = shift;
+                else if (i == 4)
+                    fridayShift = shift;
+                else if (i == 5)
+                    saturdayShift = shift;
+                else if (i == 6)
+                    sundayShift = shift;
             }
         }
 
@@ -134,10 +127,9 @@ public class HoursWorkedController
         long hours = totalSecs / 3600L;
         long mins = totalSecs / 60L % 60L;
         String hrsworked = hours + " hours and " + mins + " minutes";
-        connection.close();
-        statement.close();
         return hrsworked;
     }
+
     @FXML
     public void handleCloseButtonAction()
     {

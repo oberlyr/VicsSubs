@@ -1,6 +1,5 @@
 package View;
 
-import Database.DBConnection;
 import Main.Employee;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,20 +9,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-
 public class EmployeeWelcomeController
 {
+    private Employee employee;
+
     @FXML
     private Label welcomeField;
-
-    private DBConnection database = new DBConnection();
-    private Connection connection;
-    private Statement statement;
-    private ResultSet resultSet;
-    private Employee employee;
+    @FXML
+    Button logoutButton;
 
     public void getEmployeeData(Employee e)
     {
@@ -99,17 +92,8 @@ public class EmployeeWelcomeController
     }
 
     @FXML
-    Button logoutButton;
-
-    @FXML
     public void handleCloseButtonAction() {
         Stage stage = (Stage) logoutButton.getScene().getWindow();
         stage.close();
     }
-
-
-
-
-
-
 }

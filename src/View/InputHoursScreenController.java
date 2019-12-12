@@ -1,21 +1,17 @@
 package View;
 
-import Database.DBConnection;
+import Database.DBOperation;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.time.format.DateTimeFormatter;
 
 public class InputHoursScreenController
 {
-    private DBConnection database = new DBConnection();
-    private Connection connection = database.getConnection();
-    private Statement statement = connection.createStatement();
+    private DBOperation db = new DBOperation();
 
     @FXML
     DatePicker datePicker;
@@ -29,11 +25,10 @@ public class InputHoursScreenController
     private String username = "";
     private String date = "";
     private String time = "";
+    private int employeeID = -1;
 
-    public InputHoursScreenController() throws SQLException
-    {
-        //TODO
-    }
+    public InputHoursScreenController() throws SQLException { }
+
     public void initialize()
     {
         ObservableList<String> choices;
@@ -49,6 +44,8 @@ public class InputHoursScreenController
             date = datePicker.getValue().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
         time = "" + TimePicker.getValue();
         username = UsernameField.getText();
+        employeeID = db.getEmployeeID(username);
+
         if(username.equals("") || date.equals("") || time.equals("null"))
         {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -58,16 +55,15 @@ public class InputHoursScreenController
             alert.showAndWait();
         }
 
-        else if(doesThisUsernameExist() && !doesTheClockInExist())
+        else if(db.doesThisUsernameExist(username) && !db.doesTheClockInExist(employeeID, date))
         {
-            String inputHours = "Insert into TimePunches ( Employee_ID, ClockInTime, CurrentDate) Values (" + getEmployeeID() + ",'" + time + "', '" + date + "')";
-            statement.executeUpdate(inputHours);
+            db.insertClockIn(employeeID, time, date);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Hours inputted successfully");
             alert.setHeaderText("You have inputted hours for " + UsernameField.getText() + " successfully");
             alert.showAndWait();
         }
-        else if(!doesThisUsernameExist())
+        else if(!db.doesThisUsernameExist(username))
         {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Invalid Username");
@@ -75,7 +71,7 @@ public class InputHoursScreenController
             alert.setContentText("Please type in a correct username");
             alert.showAndWait();
         }
-        else
+        else //Should check specifically that a clock in exists, have another else for generic "something fucked up" for easier debug
         {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Clock in exists already");
@@ -92,6 +88,7 @@ public class InputHoursScreenController
             date = datePicker.getValue().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
         time = "" + TimePicker.getValue();
         username = UsernameField.getText();
+
         if(username.equals("") || date.equals("") || time.equals("null"))
         {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -100,22 +97,28 @@ public class InputHoursScreenController
             alert.setContentText("Please input all information");
             alert.showAndWait();
         }
-        else {
-            boolean doesThisClockInExist = doesTheClockInExist();
-            if (doesThisClockInExist && doesThisUsernameExist()) {
-                String inputClockOut = "update TimePunches set ClockOutTime = '" + time + "' where Employee_ID =" + getEmployeeID() + " and CurrentDate = '" + date + "'";
-                statement.executeUpdate(inputClockOut);
+        else
+        {
+            boolean doesThisClockInExist = db.doesTheClockInExist(employeeID, date);
+
+            if (doesThisClockInExist && db.doesThisUsernameExist(username))
+            {
+                db.insertClockOut(employeeID, time, date);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Clock Out successful");
                 alert.setHeaderText("You have clocked out " + username + " on " + date + " successfully");
                 alert.showAndWait();
-            } else if (!doesThisClockInExist) {
+            }
+            else if (!doesThisClockInExist)
+            {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText("ClockIn on this date does not exist");
                 alert.setContentText("Please type in a correct date or enter a clock in on this date");
                 alert.showAndWait();
-            } else {
+            }
+            else //Should check specifically that username does not exist, have another else for generic "something fucked up" for easier debug
+            {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Invalid Username");
                 alert.setHeaderText("Invalid Username");
@@ -131,12 +134,12 @@ public class InputHoursScreenController
         if(datePicker.getValue() != null)
             date = datePicker.getValue().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
         username = UsernameField.getText();
-        boolean doTheHoursExist = doTheseHoursExist();
-        if(doTheHoursExist && doesThisUsernameExist())
+
+        boolean doTheHoursExist = db.doTheseHoursExist(employeeID, date);
+
+        if(doTheHoursExist && db.doesThisUsernameExist(username))
         {
-            String deleteHours = "Delete from TimePunches where Employee_ID = " + getEmployeeID() + " and CurrentDate = '" + date + "'";
-            System.out.println(deleteHours);
-            statement.executeUpdate(deleteHours);
+            db.deletePunchesForDay(employeeID, date);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Hours deleted successfully");
             alert.setHeaderText("You have deleted hours for " + UsernameField.getText() + " successfully");
@@ -150,7 +153,7 @@ public class InputHoursScreenController
             alert.setContentText("There are no hours on this date for the specified user");
             alert.showAndWait();
         }
-        else
+        else //Should check specifically that username does not exist, have another else for generic "something fucked up" for easier debug
         {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Invalid Username");
@@ -161,60 +164,9 @@ public class InputHoursScreenController
     }
 
     @FXML
-    public boolean doesTheClockInExist() throws SQLException
-    {
-        boolean doesTheClockInExist = true;
-        String checkClockIn = "Select * from TimePunches where Employee_ID = " + getEmployeeID() + " and CurrentDate = '" + date + "'";
-        ResultSet resultSet = statement.executeQuery(checkClockIn);
-        if(!resultSet.first())
-        {
-            doesTheClockInExist = false;
-        }
-
-        return doesTheClockInExist;
-    }
-    @FXML
-    public boolean doTheseHoursExist() throws SQLException
-    {
-        boolean doTheseHoursExist = true;
-        String hoursCheck = "Select * from TimePunches where Employee_ID = " + getEmployeeID() + " and CurrentDate = '" + date + "'";
-        ResultSet resultSet = statement.executeQuery(hoursCheck);
-        if(!resultSet.first())
-        {
-            doTheseHoursExist = false;
-        }
-        return doTheseHoursExist;
-    }
-
-    public boolean doesThisUsernameExist() throws SQLException
-    {
-        boolean doesTheUsernameExist = true;
-        String usernameCheck = "Select * from Employee where Username = '" + username + "'";
-        ResultSet resultSet = statement.executeQuery(usernameCheck);
-
-        if(!resultSet.first())
-        {
-            doesTheUsernameExist = false;
-        }
-        return doesTheUsernameExist;
-    }
-    public int getEmployeeID() throws SQLException {
-        int employeeID = -1;
-        if(doesThisUsernameExist())
-        {
-            String getEmployeeID = "Select Employee_ID from Employee where Username = '" + username + "'";
-            ResultSet resultSet = statement.executeQuery(getEmployeeID);
-            resultSet.next();
-            employeeID = resultSet.getInt("Employee_ID");
-        }
-        return employeeID;
-    }
-
-    @FXML
     public void handleCloseButtonAction()
     {
         Stage stage = (Stage) CancelButton.getScene().getWindow();
         stage.close();
     }
-
 }
