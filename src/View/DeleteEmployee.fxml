@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.DeleteEmployeeController">
+   <children>
+      <Label layoutX="144.0" layoutY="113.0" text="You have successfully deleted ">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label fx:id="InsertUsernameField" layoutX="247.0" layoutY="183.0" text="this user!">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="205.0" layoutY="266.0" text="From the database">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Button fx:id="OKButton" layoutX="278.0" layoutY="316.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="51.0" onAction="#handleCloseButtonAction" text="OK" />
+   </children>
+</AnchorPane>

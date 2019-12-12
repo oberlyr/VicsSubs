@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" scaleShape="false" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.LoginController">
+   <children>
+      <Label alignment="CENTER" layoutX="175.0" layoutY="14.0" prefHeight="50.0" prefWidth="150.0" text="Vic's Subs">
+         <font>
+            <Font size="25.0" />
+         </font></Label>
+      <TextField fx:id="tfusername" layoutX="151.0" layoutY="111.0" prefHeight="30.0" prefWidth="200.0" AnchorPane.bottomAnchor="159.0" AnchorPane.leftAnchor="151.0" AnchorPane.rightAnchor="149.0" />
+      <PasswordField fx:id="pfpassword" layoutX="151.0" layoutY="165.0" prefHeight="30.0" prefWidth="200.0" AnchorPane.bottomAnchor="105.0" AnchorPane.leftAnchor="151.0" AnchorPane.rightAnchor="149.0" />
+      <Button fx:id="loginButton" layoutX="221.0" layoutY="218.0" mnemonicParsing="false" onAction="#loginButtonClicked" prefHeight="30.0" prefWidth="59.0" text="Login" AnchorPane.bottomAnchor="52.0" AnchorPane.leftAnchor="221.0" AnchorPane.rightAnchor="220.0" />
+      <Label layoutX="75.0" layoutY="111.0" prefHeight="30.0" prefWidth="75.0" text="Username" />
+      <Label layoutX="75.0" layoutY="165.0" prefHeight="30.0" prefWidth="75.0" text="Password" />
+      <ImageView fx:id="logo" fitHeight="95.0" fitWidth="200.0" layoutX="157.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../logo.png" />
+         </image></ImageView>
+   </children>
+</AnchorPane>

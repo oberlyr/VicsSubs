@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="1350.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.ViewAllHoursController">
+    <children>
+        <TableView fx:id="hoursWorkedTable" layoutX="14.0" layoutY="14.0" prefHeight="300.0" prefWidth="600.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+            <columns>
+                <TableColumn fx:id="employeeCol" prefWidth="150.0" resizable="false" text="Employee" />
+                <TableColumn fx:id="hoursWorkedCol" prefWidth="150.0" resizable="false" text="Total Hours" />
+                <TableColumn fx:id="mondayCol" prefWidth="150.0" resizable="false" text="Monday" />
+                <TableColumn fx:id="tuesdayCol" prefWidth="150.0" resizable="false" text="Tuesday" />
+                <TableColumn fx:id="wednesdayCol" prefWidth="150.0" resizable="false" text="Wednesday" />
+                <TableColumn fx:id="thursdayCol" prefWidth="150.0" resizable="false" text="Thursday" />
+                <TableColumn fx:id="fridayCol" prefWidth="150.0" resizable="false" text="Friday" />
+                <TableColumn fx:id="saturdayCol" prefWidth="150.0" resizable="false" text="Saturday" />
+                <TableColumn fx:id="sundayCol" prefWidth="150.0" resizable="false" text="Sunday" />
+            </columns>
+        </TableView>
+        <Label fx:id="weekLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="156.0" layoutY="14.0" prefHeight="30.0" prefWidth="1350.0" text="Week of 00/00/0000 - 00/00/0000" textAlignment="CENTER" AnchorPane.leftAnchor="156.0" AnchorPane.rightAnchor="156.0" />
+        <Button fx:id="doneButton" layoutX="14.0" layoutY="356.0" mnemonicParsing="false" onAction="#handleCloseButtonAction" prefHeight="30.0" prefWidth="59.0" text="Done" />
+        <Button fx:id="backWeekBtn" layoutX="537.0" layoutY="16.0" mnemonicParsing="false" onAction="#goToLastWeek" text="&lt;" />
+        <Button fx:id="nextWeekBtn" layoutX="792.0" layoutY="16.0" mnemonicParsing="false" onAction="#goToNextWeek" text="&gt;" />
+    </children>
+</AnchorPane>

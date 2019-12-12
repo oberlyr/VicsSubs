@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.EditShiftController">
+   <children>
+      <Label fx:id="lblemployee" alignment="CENTER" contentDisplay="CENTER" layoutY="42.0" prefHeight="17.0" prefWidth="400.0" text="Edit Shift" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></Label>
+      <Button fx:id="btnok" layoutX="166.0" layoutY="244.0" mnemonicParsing="false" onAction="#onEditShift" text="Save" AnchorPane.leftAnchor="166.0" AnchorPane.rightAnchor="165.0" />
+      <Button fx:id="btncancel" layoutX="71.0" layoutY="244.0" mnemonicParsing="false" onAction="#onCancel" text="Cancel" AnchorPane.leftAnchor="71.0" />
+      <Label layoutX="62.0" layoutY="92.0" text="Shift Start Time">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label layoutX="65.0" layoutY="163.0" text="Shift End Time">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <ChoiceBox fx:id="cbstarttime" layoutX="159.0" layoutY="88.0" prefWidth="150.0" />
+      <ChoiceBox fx:id="cbendtime" layoutX="159.0" layoutY="159.0" prefWidth="150.0" />
+      <RadioButton fx:id="LunchStart" layoutX="97.0" layoutY="125.0" mnemonicParsing="false" onAction="#onLunchStart" text="Lunch Shift Start">
+         <toggleGroup>
+            <ToggleGroup fx:id="Start" />
+         </toggleGroup></RadioButton>
+      <RadioButton fx:id="DinnerStart" layoutX="219.0" layoutY="125.0" mnemonicParsing="false" onAction="#onDinnerStart" text="Dinner Shift Start" toggleGroup="$Start" />
+      <RadioButton fx:id="LunchEnd" layoutX="55.0" layoutY="198.0" mnemonicParsing="false" onAction="#onLunchEnd" text="Lunch Shift End">
+         <toggleGroup>
+            <ToggleGroup fx:id="End" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="WkDyClose" layoutX="170.0" layoutY="198.0" mnemonicParsing="false" onAction="#onWeekDayEnd" text="Week Day End" toggleGroup="$End" />
+      <RadioButton fx:id="WkEdClose" layoutX="275.0" layoutY="198.0" mnemonicParsing="false" onAction="#onWeekendEnd" text="Weekend End" toggleGroup="$End" />
+      <Button fx:id="btndelete" layoutX="274.0" layoutY="244.0" mnemonicParsing="false" onAction="#onDeleteShift" text="Delete" AnchorPane.rightAnchor="72.0" />
+   </children>
+</AnchorPane>

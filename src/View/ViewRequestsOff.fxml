@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.ViewRequestsOffController">
+   <children>
+      <TableView fx:id="requestsOffTableView" layoutX="78.0" layoutY="87.0" prefHeight="380.0" prefWidth="274.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+      <Label layoutX="300.0" layoutY="49.0" prefHeight="30.0" prefWidth="100.0" text="Employee:" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="100.0" />
+      <TextField fx:id="employeeTextField" editable="false" layoutX="400.0" layoutY="49.0" prefHeight="30.0" prefWidth="175.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="100.0" />
+      <Label layoutX="300.0" layoutY="97.0" prefHeight="30.0" prefWidth="100.0" text="Start Date:" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="150.0" />
+      <TextField fx:id="startDateTextField" editable="false" layoutX="400.0" layoutY="97.0" prefHeight="30.0" prefWidth="175.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="150.0" />
+      <Label layoutX="300.0" layoutY="151.0" prefHeight="30.0" prefWidth="100.0" text="End Date:" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="200.0" />
+      <TextField fx:id="endDateTextField" editable="false" layoutX="400.0" layoutY="151.0" prefHeight="30.0" prefWidth="175.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="200.0" />
+      <Button fx:id="approveButton" layoutX="516.0" layoutY="200.0" mnemonicParsing="false" onAction="#approve" prefHeight="30.0" prefWidth="80.0" text="Approve" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="250.0" />
+      <Button fx:id="denyButton" layoutX="400.0" layoutY="200.0" mnemonicParsing="false" onAction="#deny" prefHeight="30.0" prefWidth="80.0" text="Deny" AnchorPane.rightAnchor="120.0" AnchorPane.topAnchor="250.0" />
+      <Button fx:id="doneButton" layoutX="506.0" layoutY="356.0" mnemonicParsing="false" onAction="#handleCloseButtonAction" prefHeight="30.0" prefWidth="80.0" text="Done" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+      <Label layoutX="300.0" layoutY="10.0" prefHeight="30.0" prefWidth="100.0" text="Employee Id:" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="50.0" />
+      <TextField fx:id="employeeIdTextField" editable="false" layoutX="393.0" layoutY="10.0" prefHeight="30.0" prefWidth="175.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="50.0" />
+   </children>
+</AnchorPane>

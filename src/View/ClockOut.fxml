@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="200.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.ClockOutController">
+    <children>
+        <Label fx:id="successText" alignment="CENTER" layoutX="30.0" layoutY="4.0" prefHeight="68.0" prefWidth="340.0" text="Successfully Clocked out at " AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="4.0">
+            <font>
+                <Font size="14.0" />
+            </font></Label>
+        <Label fx:id="timeLabel" alignment="CENTER" layoutX="40.0" layoutY="27.0" prefHeight="147.0" prefWidth="320.0" text="time" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0">
+            <font>
+                <Font size="24.0" />
+            </font>
+        </Label>
+        <Button fx:id="okButton" layoutX="133.0" layoutY="159.0" mnemonicParsing="false" onAction="#handleCloseButtonAction" prefHeight="30.0" prefWidth="36.0" text="Ok" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="132.0" AnchorPane.rightAnchor="132.0" />
+    </children>
+</AnchorPane>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.AddNewEmployeeController">
+    <children>
+        <Button fx:id="CancelButton" layoutX="203.0" layoutY="324.0" mnemonicParsing="false" onAction="#handleCloseButtonAction" text="Cancel" />
+        <Button fx:id="AddButton" layoutX="359.0" layoutY="324.0" mnemonicParsing="false" onAction="#addUser" text="Add" />
+        <Label layoutX="155.0" layoutY="75.0" text="First Name:" />
+        <Label layoutX="157.0" layoutY="120.0" text="Last Name" />
+        <Label layoutX="163.0" layoutY="169.0" text="Username" />
+        <Label layoutX="165.0" layoutY="211.0" text="Password" />
+        <Label layoutX="121.0" layoutY="252.0" text="Confirm Password" />
+        <TextField fx:id="FirstField" layoutX="229.0" layoutY="71.0" />
+        <TextField fx:id="LastField" layoutX="229.0" layoutY="116.0" />
+        <TextField fx:id="UserField" layoutX="229.0" layoutY="165.0" />
+        <PasswordField fx:id="PassField" layoutX="229.0" layoutY="207.0" />
+        <PasswordField fx:id="ConfirmField" layoutX="229.0" layoutY="248.0" />
+        <Label fx:id="Title" layoutX="110.0" layoutY="29.0" text="Enter all the information for the new hire below!">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+    </children>
+</AnchorPane>

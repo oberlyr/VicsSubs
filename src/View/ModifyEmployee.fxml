@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.ModifyEmployeeController">
+   <children>
+      <TextField fx:id="FirstNameField" layoutX="244.0" layoutY="106.0" />
+      <TextField fx:id="LastNameField" layoutX="244.0" layoutY="175.0" />
+      <Label fx:id="FirstNameLabel" layoutX="158.0" layoutY="110.0" text="First Name" />
+      <Label fx:id="LastNameLabel" layoutX="159.0" layoutY="179.0" text="Last Name" />
+      <Button fx:id="CancelButton" layoutX="139.0" layoutY="339.0" mnemonicParsing="false" onAction="#handleCloseButtonAction" text="Cancel" />
+      <Button fx:id="AddEmployeeButton" layoutX="225.0" layoutY="339.0" mnemonicParsing="false" onAction="#bringUpAddEmployee" text="Add" />
+      <Button fx:id="EditEmployeeButton" layoutX="300.0" layoutY="339.0" mnemonicParsing="false" onAction="#bringUpEditEmployee" text="Edit" />
+      <Button fx:id="DeleteEmployeeButton" layoutX="376.0" layoutY="339.0" mnemonicParsing="false" onAction="#bringUpDeleteConfirmation" text="Delete" />
+   </children>
+</AnchorPane>
