@@ -23,12 +23,12 @@ public class Employee
      */
     public Employee()
     {
-        this("0", null, null, false);
+        this(0, null, null, false);
     }
 
-    public Employee(String id, String firstName, String lastName, boolean isAdmin)
+    public Employee(int id, String firstName, String lastName, boolean isAdmin)
     {
-        this.id = (Integer.valueOf(id));
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.isAdmin = isAdmin;

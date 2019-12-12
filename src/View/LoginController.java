@@ -111,7 +111,7 @@ public class LoginController
         DBConnection database = new DBConnection();
         Connection connection = database.getConnection();
 
-        PreparedStatement stmt = connection.prepareStatement("select * from employee where username = ? AND password = ?");
+        PreparedStatement stmt = connection.prepareStatement("select * from Employee where username = ? AND password = ?");
 
         stmt.setString(1, userName);
         stmt.setString(2, password);
@@ -128,7 +128,7 @@ public class LoginController
                     isAdmin = true;
 
                 employee = new Employee(
-                        resultSet.getString("Employee_ID"),
+                        resultSet.getInt("Employee_ID"),
                         resultSet.getString("firstName"),
                         resultSet.getString("lastName"),
                         isAdmin);

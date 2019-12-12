@@ -7,9 +7,9 @@ import java.sql.SQLException;
 public class DBConnection
 {
     private Connection connection;
-    private String url = "jdbc:mysql://localhost:3306/VicsSubs?useSSL=false";
-    private String user = "root";
-    private String pass = "root";
+    private String url = "jdbc:mysql://johnny.heliohost.org:3306/vicssubs_VicsSubs?useSSL=false";
+    private String user = "vicssubs";
+    private String pass = "GoldTeamRules";
 
     public Connection getConnection() throws SQLException
     {

@@ -14,10 +14,6 @@ import java.sql.Statement;
 
 public class EditShiftController
 {
-    private DBConnection database = new DBConnection();
-    private Connection connection;
-    private Statement statement;
-    private ResultSet resultSet;
 
     @FXML
     Label lblemployee;
