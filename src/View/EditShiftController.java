@@ -1,19 +1,20 @@
 package View;
 
-import Database.DBConnection;
+import Database.DBOperation;
+import Main.Employee;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class EditShiftController
 {
+    private DBOperation db = new DBOperation();
 
     @FXML
     Label lblemployee;
@@ -42,14 +43,16 @@ public class EditShiftController
     @FXML
     ToggleGroup End;
 
-    private String ShiftDate = "";
-    private int EmployeeID = 0;
+    private String shiftDate = "";
+    private int employeeID = 0;
     private ModifyScheduleController Controller;
+
+    public EditShiftController() throws SQLException { }
 
     public void onInit(String date, int employeeID, ModifyScheduleController controller) throws SQLException
     {
-        ShiftDate = date;
-        EmployeeID = employeeID;
+        shiftDate = date;
+        this.employeeID = employeeID;
         Controller = controller;
 
         ObservableList<String> choices;
@@ -58,45 +61,36 @@ public class EditShiftController
         cbstarttime.setItems(choices);
         cbendtime.setItems(choices);
 
-        DBConnection database = new DBConnection();
-        Connection connection = database.getConnection();
-        Statement statement = connection.createStatement();
-        String str = "SELECT ShiftStartTime, ShiftEndTime FROM Schedule WHERE ShiftDate = '" + ShiftDate + "' AND Employee_ID = " + EmployeeID;
-        ResultSet resultSet = statement.executeQuery(str);
-        resultSet.next();
+        String[] shiftTimes = db.getCurrentShiftTimes(shiftDate, this.employeeID);
 
-        cbstarttime.setValue(resultSet.getString("ShiftStartTime"));
-        cbendtime.setValue(resultSet.getString("ShiftEndTime"));
+        cbstarttime.setValue(shiftTimes[0]);
+        cbendtime.setValue(shiftTimes[1]);
 
-        resultSet = statement.executeQuery("SELECT FirstName, LastName FROM Employee WHERE Employee_ID = " + EmployeeID);
-        resultSet.next();
+        Employee employee = db.getEmployeeData(employeeID);
 
-        lblemployee.setText("Alter " + ShiftDate + " Shift for " + resultSet.getString("FirstName") + " " + resultSet.getString("LastName"));
+        lblemployee.setText("Alter " + shiftDate + " Shift for " + employee.getFirstName() + " " + employee.getLastName());
     }
 
     @FXML
-    private void onEditShift() throws SQLException
+    private void onEditShift() throws SQLException, ParseException
     {
-        //Add method to verify the time is valid
         String startTime = (String)cbstarttime.getValue();
         String endTime = (String)cbendtime.getValue();
 
-        DBConnection database = new DBConnection();
-        Connection connection = database.getConnection();
-        Statement statement = connection.createStatement();
-        String str = "UPDATE Schedule SET ShiftStartTime = '" + startTime + "', ShiftEndTime = '" + endTime +
-                "' WHERE Employee_ID = " + EmployeeID + " AND ShiftDate = '" + ShiftDate + "';";
-        System.out.println(str);
-
-        try
+        if(validateHours())
         {
-            statement.executeUpdate(str);
+            db.updateShift(employeeID, startTime, endTime, shiftDate);
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Shift Changed");
             alert.setHeaderText("Shift Changed Successfully");
             alert.showAndWait();
+
+            Controller.showSchedule();
+
+            Stage stage = (Stage) btnok.getScene().getWindow();
+            stage.close();
         }
-        catch (SQLException e)
+        else
         {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Shift Change Failed");
@@ -104,11 +98,6 @@ public class EditShiftController
             alert.setContentText("Please Verify Times are Valid and Try Again");
             alert.showAndWait();
         }
-
-        Controller.showSchedule();
-
-        Stage stage = (Stage) btnok.getScene().getWindow();
-        stage.close();
     }
 
     @FXML
@@ -121,9 +110,6 @@ public class EditShiftController
     @FXML
     private void onDeleteShift() throws SQLException
     {
-        DBConnection database = new DBConnection();
-        Connection connection = database.getConnection();
-        Statement statement = connection.createStatement();
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this shift?", ButtonType.YES, ButtonType.CANCEL);
         alert.setTitle("Delete Shift Confirmation");
         alert.setHeaderText("Please confirm shift deletion");
@@ -131,40 +117,45 @@ public class EditShiftController
 
         if (alert.getResult() == ButtonType.YES)
         {
-            String deleteShift = "DELETE FROM Schedule WHERE Employee_ID = " + EmployeeID + " AND ShiftDate = '" + ShiftDate + "'";
-            statement.executeUpdate(deleteShift);
+            db.deleteShift(employeeID, shiftDate);
             Controller.showSchedule();
             Stage stage = (Stage) btndelete.getScene().getWindow();
             stage.close();
         }
     }
+
+    private boolean validateHours() throws ParseException
+    {
+        String startTime = (String)cbstarttime.getValue();
+        String endTime = (String)cbendtime.getValue();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a");
+        Date start = sdf.parse(startTime);
+        Date end = sdf.parse(endTime);
+
+        if(end.before(start))
+            return false;
+        else
+            return true;
+    }
+
     @FXML
     private void onLunchStart()
-    {
-        cbstarttime.setValue("11:00:00 AM");
-    }
+    { cbstarttime.setValue("11:00:00 AM"); }
 
     @FXML
     private void onDinnerStart()
-    {
-        cbstarttime.setValue("3:00:00 PM");
-    }
+    { cbstarttime.setValue("3:00:00 PM"); }
 
     @FXML
     private void onLunchEnd()
-    {
-        cbendtime.setValue("3:00:00 PM");
-    }
+    { cbendtime.setValue("3:00:00 PM"); }
 
     @FXML
     private void onWeekDayEnd()
-    {
-        cbendtime.setValue("8:00:00 PM");
-    }
+    { cbendtime.setValue("8:00:00 PM"); }
 
     @FXML
     private void onWeekendEnd()
-    {
-        cbendtime.setValue("9:30:00 PM");
-    }
+    { cbendtime.setValue("9:30:00 PM"); }
 }
