@@ -11,6 +11,11 @@ public class DBConnection
     private String user = "vicssubs";
     private String pass = "GoldTeamRules";
 
+//AMPPS
+//    private String url = "jdbc:mysql://localhost:3306/VicsSubs?useSSL=false";
+//    private String user = "root";
+//    private String pass = "root";
+
     public Connection getConnection() throws SQLException
     {
         connection = DriverManager.getConnection(url, user, pass);
