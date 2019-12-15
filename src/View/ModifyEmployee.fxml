@@ -6,14 +6,7 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.ModifyEmployeeController">
    <children>
-      <TableView fx:id="employeeTable" layoutX="13.0" layoutY="14.0" prefHeight="372.0" prefWidth="377.0">
-         <columns>
-            <TableColumn fx:id="employeeIDCol" prefWidth="86.0" text="EmployeeID" />
-            <TableColumn fx:id="firstNameCol" prefWidth="102.0" text="FirstName" />
-            <TableColumn fx:id="lastNameCol" prefWidth="109.0" text="LastName" />
-            <TableColumn fx:id="adminCol" prefWidth="79.0" text="isAdmin" />
-         </columns>
-      </TableView>
+      <TableView fx:id="employeeTable" layoutX="13.0" layoutY="14.0" prefHeight="372.0" prefWidth="377.0" />
       <Button fx:id="CancelButton" layoutX="471.0" layoutY="27.0" mnemonicParsing="false" onAction="#handleCloseButtonAction" text="Cancel" />
    </children>
 </AnchorPane>
