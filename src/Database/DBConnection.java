@@ -9,7 +9,7 @@ public class DBConnection
     private Connection connection;
     private String url = "jdbc:mysql://johnny.heliohost.org:3306/vicssubs_VicsSubs?useSSL=false";
     private String user = "vicssubs";
-    private String pass = "GoldTeamRules";
+    private String pass = "MYpYKWy62HVuk9";
 
 //AMPPS
 //    private String url = "jdbc:mysql://localhost:3306/VicsSubs?useSSL=false";
