@@ -1,9 +1,7 @@
 package Main;
 
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -18,21 +16,36 @@ public class Employee
     private String lastName;
     private boolean isAdmin;
 
+    private StringProperty FirstName;
+    private StringProperty LastName;
+    private IntegerProperty employeeID;
+
     /**
      * Default constructor.
      */
-    public Employee()
+    //public Employee()
+  //  {
+    //    this(0, null, null, false);
+   // }
+    public Employee(int id, String firstName, String lastName)
     {
-        this("0", null, null, false);
+        this.FirstName = new SimpleStringProperty(firstName);
+        this.LastName = new SimpleStringProperty(lastName);
+        this.employeeID = new SimpleIntegerProperty(id);
     }
 
-    public Employee(String id, String firstName, String lastName, boolean isAdmin)
+    public Employee(int id, String firstName, String lastName, boolean isAdmin)
     {
-        this.id = (Integer.valueOf(id));
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.isAdmin = isAdmin;
     }
+
+
+
+    //For Admin Modify Employee
+
 
     public int getId()
     {
@@ -67,5 +80,7 @@ public class Employee
     {
         this.isAdmin = isAdmin;
     }
+
+    public StringProperty FirstNameProperty(){return FirstName;}
 
 }

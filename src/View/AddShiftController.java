@@ -1,24 +1,20 @@
 package View;
 
-import Database.DBConnection;
+import Database.DBOperation;
+import Main.Employee;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 public class AddShiftController
 {
-    private ResultSet resultSet;
+    DBOperation db = new DBOperation();
 
     @FXML
     Label lblemployee;
@@ -45,14 +41,16 @@ public class AddShiftController
     @FXML
     ToggleGroup End;
 
-    private String ShiftDate = "";
-    private int EmployeeID = 0;
+    private String shiftDate = "";
+    private int employeeID = 0;
     private ModifyScheduleController Controller;
+
+    public AddShiftController() throws SQLException { }
 
     public void onInit(String date, int employeeID, ModifyScheduleController controller) throws SQLException
     {
-        ShiftDate = date;
-        EmployeeID = employeeID;
+        shiftDate = date;
+        this.employeeID = employeeID;
         Controller = controller;
 
         ObservableList<String> choices;
@@ -61,13 +59,9 @@ public class AddShiftController
         cbstarttime.setItems(choices);
         cbendtime.setItems(choices);
 
-        DBConnection database = new DBConnection();
-        Connection connection = database.getConnection();
-        Statement statement = connection.createStatement();
-        resultSet = statement.executeQuery("SELECT FirstName, LastName FROM Employee WHERE Employee_ID = " + EmployeeID);
-        resultSet.next();
+        Employee employee = db.getEmployeeData(employeeID);
 
-        lblemployee.setText("Add " + ShiftDate + " Shift for " + resultSet.getString("FirstName") + " " + resultSet.getString("LastName"));
+        lblemployee.setText("Add " + shiftDate + " Shift for " + employee.getFirstName() + " " + employee.getLastName());
     }
 
     @FXML
@@ -75,13 +69,6 @@ public class AddShiftController
     {
         String startTime = (String)cbstarttime.getValue();
         String endTime = (String)cbendtime.getValue();
-
-        DBConnection database = new DBConnection();
-        Connection connection = database.getConnection();
-        Statement statement = connection.createStatement();
-        String str = "INSERT INTO Schedule (Employee_ID, ShiftDate, ShiftStartTime, ShiftEndTime) VALUES ("
-                + EmployeeID + ", '" + ShiftDate + "', '" + startTime + "', '" + endTime + "');";
-        System.out.println(str);
 
         if(!validateHours())
         {
@@ -97,7 +84,8 @@ public class AddShiftController
             return;
         }
 
-        statement.executeUpdate(str);
+        db.addShift(employeeID, shiftDate, startTime, endTime);
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Shift Added");
         alert.setHeaderText("Shift Added Successfully");

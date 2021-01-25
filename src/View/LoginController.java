@@ -1,8 +1,7 @@
 package View;
 
-import Database.DBConnection;
+import Database.DBOperation;
 import Main.Employee;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,13 +12,13 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
-
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.*;
 
 public class LoginController
 {
+    private DBOperation db = new DBOperation();
+
     @FXML
     private TextField tfusername;
     @FXML
@@ -28,6 +27,8 @@ public class LoginController
     private PasswordField pfpassword;
 
     private Employee employee;
+
+    public LoginController() throws SQLException { }
 
     public void initialize()
     {
@@ -62,10 +63,12 @@ public class LoginController
 
             try
             {
-                if (isValidCredentials(userName,password))
+                if (db.isValidCredentials(userName,password))
                 {
                     tfusername.clear();
                     pfpassword.clear();
+
+                    employee = db.getEmployeeData(userName, password);
 
                     if(employee.getIsAdmin())
                     {
@@ -90,6 +93,9 @@ public class LoginController
                 }
                 else
                 {
+                    tfusername.clear();
+                    pfpassword.clear();
+
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Login Failed");
                     alert.setHeaderText("Invalid Username or Password");
@@ -102,47 +108,14 @@ public class LoginController
                 e.printStackTrace();
             }
         }
-    }
-
-    private boolean isValidCredentials(String userName, String password) throws SQLException
-    {
-        boolean userPassOk = false;
-
-        DBConnection database = new DBConnection();
-        Connection connection = database.getConnection();
-
-        PreparedStatement stmt = connection.prepareStatement("select * from employee where username = ? AND password = ?");
-
-        stmt.setString(1, userName);
-        stmt.setString(2, password);
-
-        ResultSet resultSet = stmt.executeQuery();
-
-        while (resultSet.next())
+        else
         {
-            if(resultSet.getString("username")!=null && resultSet.getString("password")!=null)
-            {
-                userPassOk = true;
-                boolean isAdmin = false;
-                if(resultSet.getString("IsAdmin").equals("1"))
-                    isAdmin = true;
-
-                employee = new Employee(
-                        resultSet.getString("Employee_ID"),
-                        resultSet.getString("firstName"),
-                        resultSet.getString("lastName"),
-                        isAdmin);
-            }
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Not All Fields Filled Out");
+            alert.setHeaderText("Not All Fields Filled Out");
+            alert.setContentText("You must supply a username and password!");
+            alert.showAndWait();
         }
-
-        if(!userPassOk)
-        {
-            tfusername.clear();
-            pfpassword.clear();
-
-            userPassOk = false;
-        }
-        return userPassOk;
     }
 
     private boolean allFieldsEntered()

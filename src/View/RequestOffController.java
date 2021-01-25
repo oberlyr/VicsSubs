@@ -13,14 +13,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.format.DateTimeFormatter;
 
-public class RequestOffController {
+public class RequestOffController
+{
 
     @FXML
     Button cancelButton;
-
     @FXML
     DatePicker startDatePicker;
-
     @FXML
     DatePicker endDatePicker;
 

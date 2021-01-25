@@ -1,6 +1,5 @@
 package View;
 
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -36,7 +35,6 @@ public class AdminWelcomeController
         stage.setTitle("Modifying Employee");
         stage.setScene(new Scene(root1));
         stage.show();
-
     }
 
     @FXML
@@ -48,7 +46,6 @@ public class AdminWelcomeController
         stage.setTitle("Employee Requests");
         stage.setScene(new Scene(root1));
         stage.show();
-
     }
 
     @FXML
@@ -60,7 +57,6 @@ public class AdminWelcomeController
         stage.setTitle("Modifying Schedule");
         stage.setScene(new Scene(root1));
         stage.show();
-
     }
 
     @FXML
@@ -72,7 +68,6 @@ public class AdminWelcomeController
         stage.setTitle("View Hours Worked");
         stage.setScene(new Scene(root1));
         stage.show();
-
     }
 
     @FXML

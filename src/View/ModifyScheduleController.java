@@ -1,7 +1,6 @@
 package View;
 
-import Database.DBConnection;
-import Main.Employee;
+import Database.DBOperation;
 import Main.Schedule;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,15 +11,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -30,14 +24,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class ModifyScheduleController
 {
-    private DBConnection database = new DBConnection();
-    private Connection connection;
-    private Statement statement;
-    private ResultSet resultSet;
+    private DBOperation db = new DBOperation();
 
     @FXML
     Button doneButton;
@@ -66,12 +56,15 @@ public class ModifyScheduleController
     @FXML
     TableColumn<Schedule, String> saturdayCol;
 
-    ArrayList<Integer> EmployeeIDs = new ArrayList<>();
-    ArrayList<String> EmployeeNames = new ArrayList<>();
+    ArrayList<Integer> employeeIDs = new ArrayList<>();
+    ArrayList<String> employeeNames = new ArrayList<>();
     String week[] = new String[7];
+
+    public ModifyScheduleController() throws SQLException { }
 
     public void initialize() throws SQLException
     {
+        getWeek();
         showSchedule();
     }
 
@@ -117,7 +110,7 @@ public class ModifyScheduleController
 
                             if (alert.getResult() == ButtonType.YES)
                             {
-                                useLastWeekSchedule(EmployeeIDs.get(row));
+                                useLastWeekSchedule(employeeIDs.get(row));
                             }
                         }
                         catch (SQLException | ParseException e)
@@ -129,7 +122,7 @@ public class ModifyScheduleController
                     {
                         try
                         {
-                            addShift(col-1, EmployeeIDs.get(row));
+                            addShift(col-1, employeeIDs.get(row));
                         }
                         catch (IOException | SQLException e)
                         {
@@ -140,7 +133,7 @@ public class ModifyScheduleController
                     {
                         try
                         {
-                            changeShift(col-1, EmployeeIDs.get(row));
+                            changeShift(col-1, employeeIDs.get(row));
                         }
                         catch (IOException | SQLException e)
                         {
@@ -176,102 +169,35 @@ public class ModifyScheduleController
         stage.show();
     }
 
-    private ObservableList<Schedule> getDataFromScheduleAndAddToObservableList(){
+    private ObservableList<Schedule> getDataFromScheduleAndAddToObservableList()
+    {
         ObservableList<Schedule> scheduleData = FXCollections.observableArrayList();
-        EmployeeIDs.clear();
-        EmployeeNames.clear();
-        try {
-            String sundayShift = "";
-            String mondayShift = "";
-            String tuesdayShift = "";
-            String wednesdayShift = "";
-            String thursdayShift = "";
-            String fridayShift = "";
-            String saturdayShift = "";
-            String employee = "";
-            String[] week = getWeek();
+        employeeIDs.clear();
+        employeeNames.clear();
 
-            connection = (Connection) database.getConnection();
-            statement = (Statement) connection.createStatement();
-            resultSet = statement.executeQuery("SELECT * FROM Employee WHERE IsAdmin = 0");
+        try
+        {
+            employeeIDs = db.getEmployeeIDs();
+            employeeNames = db.getEmployeeNames();
 
-            while(resultSet.next())
+            for(int i = 0; i < employeeIDs.size(); i++)
             {
-                EmployeeIDs.add(resultSet.getInt("Employee_Id"));
-                EmployeeNames.add(resultSet.getString("FirstName") + " " + resultSet.getString("LastName"));
+                scheduleData.add(db.getSchedule(employeeIDs.get(i), employeeNames.get(i), week));
             }
-
-            for(int i = 0; i < EmployeeIDs.size(); i++)
-            {
-                resultSet = statement.executeQuery("SELECT * from Schedule where Employee_Id = " + EmployeeIDs.get(i));
-                employee = EmployeeNames.get(i);
-                mondayShift = "";
-                tuesdayShift = "";
-                wednesdayShift = "";
-                thursdayShift = "";
-                fridayShift = "";
-                saturdayShift = "";
-                sundayShift = "";
-
-                while(resultSet.next())
-                {
-                    String resultDate = resultSet.getString("ShiftDate");
-                    String ShiftStartTime = resultSet.getString("ShiftStartTime");
-                    String ShiftEndTime = resultSet.getString("ShiftEndTime");
-                    String ShiftTime = "";
-                    int startFirstColon = ShiftStartTime.indexOf(":");
-                    int endFirstColon = ShiftEndTime.indexOf(":");
-                    int startLength = ShiftStartTime.length();
-                    int endLength = ShiftEndTime.length();
-
-                    if(!ShiftStartTime.equals("REQUEST OFF"))
-                    {
-                        ShiftStartTime = ShiftStartTime.substring(0, startFirstColon + 3) + ShiftStartTime.substring(startLength - 3, startLength);
-                        ShiftEndTime = ShiftEndTime.substring(0, endFirstColon + 3) + ShiftEndTime.substring(endLength - 3, endLength);
-                        ShiftTime = ShiftStartTime + " - " + ShiftEndTime;
-                    }
-                    else
-                        ShiftTime = ShiftStartTime;
-
-                    if (resultDate.equals(week[0]))
-                        mondayShift = ShiftTime;
-
-                    else if (resultDate.equals(week[1]))
-                        tuesdayShift = ShiftTime;
-
-                    else if (resultDate.equals(week[2]))
-                        wednesdayShift = ShiftTime;
-
-                    else if (resultDate.equals(week[3]))
-                        thursdayShift = ShiftTime;
-
-                    else if (resultDate.equals(week[4]))
-                        fridayShift = ShiftTime;
-
-                    else if (resultDate.equals(week[5]))
-                        saturdayShift = ShiftTime;
-
-                    else if (resultDate.equals(week[6]))
-                        sundayShift = ShiftTime;
-                }
-                scheduleData.add(new Schedule(employee, mondayShift, tuesdayShift, wednesdayShift, thursdayShift, fridayShift, saturdayShift, sundayShift));
-            }
-            connection.close();
-            statement.close();
-            resultSet.close();
         }
         catch (SQLException e)
         {
             e.printStackTrace();
         }
+
         return scheduleData;
     }
 
-    public String[] getWeek()
+    public void getWeek()
     {
         if(week[0] != null)
         {
-            return week;
+            return;
         }
 
         LocalDate mostRecentMonday =
@@ -288,7 +214,6 @@ public class ModifyScheduleController
             week[i] = current.format(mmddyyyy);
         }
         weekLabel.setText("Week of " + week[0] + " - " + week[6]);
-        return week;
     }
 
     private void useLastWeekSchedule(int employeeID) throws ParseException, SQLException
@@ -299,30 +224,9 @@ public class ModifyScheduleController
             SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
             c.setTime(sdf.parse(week[i]));
             c.add(Calendar.DAY_OF_MONTH, -7);
-            String lastWeek = sdf.format(c.getTime());
+            String lastWeekDate = sdf.format(c.getTime());
 
-            DBConnection database = new DBConnection();
-            Connection connection = database.getConnection();
-            Statement statement = connection.createStatement();
-
-            resultSet = statement.executeQuery("SELECT ShiftStartTime, ShiftEndTime FROM Schedule WHERE Employee_ID = "
-                    + employeeID + " AND ShiftDate = '" + lastWeek + "';");
-            try
-            {
-                resultSet.next();
-
-                String startTime = resultSet.getString("ShiftStartTime");
-                String endTime = resultSet.getString("ShiftEndTime");
-
-                String str = "INSERT INTO Schedule (Employee_ID, ShiftDate, ShiftStartTime, ShiftEndTime) VALUES ("
-                        + employeeID + ", '" + week[i] + "', '" + startTime + "', '" + endTime + "');";
-
-                statement.executeUpdate(str);
-            }
-            catch (Exception e)
-            {
-                //We don't care, just catching errors when they are off
-            }
+            db.useLastWeekSchedule(employeeID, lastWeekDate, week[i]);
         }
         showSchedule();
     }
